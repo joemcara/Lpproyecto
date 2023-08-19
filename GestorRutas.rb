@@ -1,5 +1,5 @@
+require 'csv'
 class GestorRutas
-  
     def initialize
       @rutas = []
     end
@@ -7,6 +7,12 @@ class GestorRutas
     def crear_ruta(nombre, tiempo, dinero)
       ruta = Ruta.new(nombre, tiempo, dinero)
       @rutas << ruta
+      #guardar en csv la ruta creada
+      archivo = 'rutas.csv'
+      datos = nombre, tiempo, dinero
+      CSV.open(archivo, 'a') do |csv|
+        csv << datos
+      end
     end
   
     def listar_rutas
