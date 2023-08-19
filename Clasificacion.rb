@@ -11,13 +11,20 @@ class Clasificacion
       @rutas = rutas
     end
   
-    def filtrar_por_valoracion(valoracion_minima)
-      rutas_filtradas = @rutas.select { |ruta| ruta.valoracion >= valoracion_minima }
-      rutas_filtradas.each do |ruta|
-        puts "Nombre: #{ruta.nombre}, Tiempo: #{ruta.tiempo}, Dinero: #{ruta.dinero}, Valoración: #{ruta.valoracion}"
+    def filtrar_y_guardar_csv(valoracion_minima, archivo_salida)
+        rutas_filtradas = @rutas.select { |ruta| ruta.valoracion >= valoracion_minima }
+        rutas_filtradas.sort_by! { |ruta| -ruta.valoracion }
+    
+        CSV.open(archivo_salida, 'w') do |csv|
+          csv << ['Nombre', 'Tiempo', 'Dinero', 'Valoración']
+          rutas_filtradas.each do |ruta|
+            csv << [ruta.nombre, ruta.tiempo, ruta.dinero, ruta.valoracion]
+          end
+        end
+    
+        puts "Rutas filtradas y clasificadas guardadas en '#{archivo_salida}'"
       end
     end
-  end
   
   ruta1 = Ruta.new("Parque Lineal", 120, 50, 4.5)
   ruta2 = Ruta.new("Bar tiki", 90, 30, 3.8)
@@ -30,5 +37,5 @@ class Clasificacion
   rutas = [ruta1, ruta2, ruta3, ruta4, ruta5, ruta6]
   
   clasificacion = Clasificacion.new(rutas)
-  clasificacion.filtrar_por_valoracion(4.0)
+  clasificacion.filtrar_y_guardar_csv(4.0)
   
