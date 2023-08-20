@@ -1,52 +1,60 @@
 require 'csv'
+require 'sinatra'
+require 'json'
 ARCHIVO = 'rutas.csv'
 class GestorRutas
-    def initialize
-      @rutas = []
+  attr_accessor :rutas
+
+    def initialize(data)
+      @rutas = data
     end
   
-    def crear_ruta(nombre, tiempo, dinero, valoracion)
-      ruta = Ruta.new(nombre, tiempo, dinero, valoracion)
-      @rutas << ruta
-      #guardar en csv la ruta creada
-      
-      
-      CSV.open(archivo, 'w') do |csv|
-        @rutas.each do |ruta|
-          datos = ruta.nombre, ruta.tiempo, ruta.dinero, ruta.valoracion
-          csv<< datos
+    def write_data_to_csv()      
+      CSV.open(ARCHIVO, 'w') do |csv|
+          csv << ["nombre","tiempo","dinero","valoracion"]
+          rutas.each {|row| csv << row.values}
         end
-      end
     end
   
-    def listar_rutas
-      @rutas.each_with_index do |ruta, index|
-        puts "Ruta #{index + 1}:"
-        puts "Nombre: #{ruta.nombre}"
-        puts "Tiempo: #{ruta.tiempo}"
-        puts "Dinero necesario: #{ruta.dinero}"
-        puts "Valoracion: #{ruta.valoracion}"
-        puts "--------------------------"
+    def read_data_from_csv
+      data = []
+      CSV.foreach(ARCHIVO, headers: true) do |row|
+        data << row.to_h
       end
-    end
-  
-    def actualizar_ruta(index, nombre, tiempo, dinero, valoracion)
-      if index >= 0 && index < @rutas.length
-        @rutas[index].nombre = nombre
-        @rutas[index].tiempo = tiempo
-        @rutas[index].dinero = dinero
-        @rutas[index].valoracion = valoracion
-      else
-        puts "Índice de ruta no válido."
+      @rutas = data
       end
-    end
+end
+
+gestor = GestorRutas.new([])
   
-    def eliminar_ruta(index)
-      if index >= 0 && index < @rutas.length
-        @rutas.delete_at(index)
-      else
-        puts "Índice de ruta no válido."
-      end
-    end
-  end
+  get '/api/rutas' do
+    content_type :json
+    gestor.read_data_from_csv
+    gestor.rutas.to_json
+end
   
+post '/api/rutas' do
+    request_body = JSON.parse(request.body.read)
+    gestor.read_data_from_csv
+    gestor.rutas << request_body
+    gestor.write_data_to_csv()
+    status 201
+    request_body.to_json
+end
+
+put '/api/rutas/:nombre' do
+    id = params['id'].to_i
+    request_body = JSON.parse(request.body.read)
+    data = read_data_from_csv
+    data[id] = request_body
+    write_data_to_csv(data)
+    status 204
+end
+
+delete '/api/rutas/:nombre' do
+    id = params['user'].to_i
+    data = read_data_from_csv
+    data.delete_at(id)
+    write_data_to_csv(data)
+    status 204
+end
