@@ -1,20 +1,56 @@
 require 'csv'
+require 'sinatra'
+require 'json'
 ARCHIVO_USUARIOS = 'usuarios.csv'
 class GestorUsuario
-    def initialize
-        @usuarios = []
+    def initialize(data)
+        @usuarios = data
     end
-
-    def crear_usuario(nombre, correo, nombre_usuario, contrasena, rutasMeGusta, rutasFavoritas)
-        usuario = Usuario.new(nombre, correo, nombre_usuario, contrasena, rutasMeGusta, rutasFavoritas)
-        @usuarios << usuario
-        #SOBREESCRIBIR CSV CON TODOS LOS USUARIOS
-        CSV.open(archivo, 'w') do |csv|
-            @usuarios.each do |usuario|
-                datos = usuario.nombre, usuario.correo, usuario.nombre_usuario, usuario.contrasena, usuario.rutasMeGusta, usuario.rutasFavoritas
-                csv << datos
-            end
+    def write_data_to_csv(data)
+        CSV.open(ARCHIVO_USUARIOS, 'w') do |csv|
+          csv << ['nombre', 'correo', 'nombre_usuario', 'contrasena', 'rutasMeGusta', 'rutasFavoritas']
+          data.each { |row| csv << row.values }
         end
     end
+    def read_data_from_csv
+        data = []
+        CSV.foreach(ARCHIVO_USUARIOS, headers: true) do |row|
+          data << row.to_h
+        end
+        data
+    end
+end
 
+gestor = GestorUsuario.new([])
+
+get '/api/users' do
+    content_type :json
+    data = gestor.read_data_from_csv
+    data.to_json
+end
+  
+post '/api/users' do
+    request_body = JSON.parse(request.body.read)
+    data = gestor.read_data_from_csv
+    data << request_body
+    gestor.write_data_to_csv(data)
+    status 201
+    request_body.to_json
+end
+
+put '/api/users/:id' do
+    id = params['id'].to_i
+    request_body = JSON.parse(request.body.read)
+    data = read_data_from_csv
+    data[id] = request_body
+    write_data_to_csv(data)
+    status 204
+end
+
+delete '/api/users/:ruta' do
+    id = params['user'].to_i
+    data = read_data_from_csv
+    data.delete_at(id)
+    write_data_to_csv(data)
+    status 204
 end
