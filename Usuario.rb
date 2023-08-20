@@ -1,10 +1,11 @@
 class Usuario
-    attr_accessor :nombre, :correo, :rutas, :nombre_usuario, :contrasena
+    attr_accessor :nombre, :correo, :rutasMeGusta, :rutasFavoritas, :nombre_usuario, :contrasena
 
-    def initialize(nombre, correo, nombre_usuario, contrasena, rutas)
+    def initialize(nombre, correo, nombre_usuario, contrasena, rutasMeGusta, rutasFavoritas)
         @nombre = nombre
         @correo = correo
-        @rutas = rutas
+        @rutasMeGusta = rutasMeGusta
+        @rutasFavoritas = rutasFavoritas
         @nombre_usuario = nombre_usuario
         @contrasena = contrasena
     end

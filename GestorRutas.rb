@@ -5,15 +5,15 @@ class GestorRutas
       @rutas = []
     end
   
-    def crear_ruta(nombre, tiempo, dinero)
-      ruta = Ruta.new(nombre, tiempo, dinero)
+    def crear_ruta(nombre, tiempo, dinero, valoracion)
+      ruta = Ruta.new(nombre, tiempo, dinero, valoracion)
       @rutas << ruta
       #guardar en csv la ruta creada
       
       
       CSV.open(archivo, 'w') do |csv|
-        rutas.each do |ruta|
-          datos = ruta.nombre, ruta.tiempo, ruta.dinero
+        @rutas.each do |ruta|
+          datos = ruta.nombre, ruta.tiempo, ruta.dinero, ruta.valoracion
           csv<< datos
         end
       end
@@ -25,15 +25,17 @@ class GestorRutas
         puts "Nombre: #{ruta.nombre}"
         puts "Tiempo: #{ruta.tiempo}"
         puts "Dinero necesario: #{ruta.dinero}"
+        puts "Valoracion: #{ruta.valoracion}"
         puts "--------------------------"
       end
     end
   
-    def actualizar_ruta(index, nombre, tiempo, dinero)
+    def actualizar_ruta(index, nombre, tiempo, dinero, valoracion)
       if index >= 0 && index < @rutas.length
         @rutas[index].nombre = nombre
         @rutas[index].tiempo = tiempo
         @rutas[index].dinero = dinero
+        @rutas[index].valoracion = valoracion
       else
         puts "Índice de ruta no válido."
       end
