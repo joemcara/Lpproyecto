@@ -3,13 +3,15 @@ require 'sinatra'
 require 'json'
 ARCHIVO_USUARIOS = 'usuarios.csv'
 class GestorUsuario
+  attr_accessor :usuarios
+
     def initialize(data)
         @usuarios = data
     end
-    def write_data_to_csv(data)
+    def write_data_to_csv
         CSV.open(ARCHIVO_USUARIOS, 'w') do |csv|
           csv << ['nombre', 'correo', 'nombre_usuario', 'contrasena', 'rutasMeGusta', 'rutasFavoritas']
-          data.each { |row| csv << row.values }
+          usuarios.each { |row| csv << row.values }
         end
     end
     def read_data_from_csv
@@ -17,7 +19,7 @@ class GestorUsuario
         CSV.foreach(ARCHIVO_USUARIOS, headers: true) do |row|
           data << row.to_h
         end
-        data
+        @usuarios = data
     end
 end
 
@@ -25,15 +27,15 @@ gestor = GestorUsuario.new([])
 
 get '/api/users' do
     content_type :json
-    data = gestor.read_data_from_csv
-    data.to_json
+    gestor.read_data_from_csv
+    gestor.usuarios.to_json
 end
   
 post '/api/users' do
     request_body = JSON.parse(request.body.read)
-    data = gestor.read_data_from_csv
-    data << request_body
-    gestor.write_data_to_csv(data)
+    gestor.read_data_from_csv
+    gestor.usuarios << request_body
+    gestor.write_data_to_csv()
     status 201
     request_body.to_json
 end
