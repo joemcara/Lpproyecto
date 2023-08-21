@@ -43,18 +43,28 @@ post '/api/rutas' do
 end
 
 put '/api/rutas/:nombre' do
-    id = params['id'].to_i
-    request_body = JSON.parse(request.body.read)
-    data = read_data_from_csv
-    data[id] = request_body
-    write_data_to_csv(data)
-    status 204
+  nombreRuta = params['nombre']
+  request_body = JSON.parse(request.body.read)
+  gestor.read_data_from_csv
+  gestor.rutas.each_with_index do |ruta, index|
+    if ruta['nombre'] == nombreRuta
+      gestor.rutas[index] = request_body
+    end
+  end
+  gestor.write_data_to_csv()
+  status 200
+  {"UPDATED" => nombreRuta}.to_json
 end
 
 delete '/api/rutas/:nombre' do
-    id = params['user'].to_i
-    data = read_data_from_csv
-    data.delete_at(id)
-    write_data_to_csv(data)
-    status 204
+    nombreRuta = params['nombre']
+    gestor.read_data_from_csv
+    gestor.rutas.each_with_index do |ruta, index|
+      if ruta['nombre'] == nombreRuta
+        gestor.rutas.delete_at(index)
+      end
+    end
+    gestor.write_data_to_csv()
+    status 200
+    {"DELETED" => nombreRuta}.to_json
 end
