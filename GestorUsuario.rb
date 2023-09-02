@@ -8,12 +8,14 @@ class GestorUsuario
     def initialize(data)
         @usuarios = data
     end
+    
     def write_data_to_csv
         CSV.open(ARCHIVO_USUARIOS, 'w') do |csv|
           csv << ['nombre', 'correo', 'nombre_usuario', 'contrasena', 'rutasMeGusta', 'rutasFavoritas']
           usuarios.each { |row| csv << row.values }
         end
     end
+
     def read_data_from_csv
         data = []
         CSV.foreach(ARCHIVO_USUARIOS, headers: true) do |row|
@@ -34,6 +36,13 @@ end
 post '/api/users' do
     request_body = JSON.parse(request.body.read)
     gestor.read_data_from_csv
+    gestor.usuarios.each_with_index do |usuario, index|
+        puts usuario['nombre'] == request_body['nombre']
+        if usuario['nombre'] == request_body['nombre']
+
+          return status 400
+        end
+      end
     gestor.usuarios << request_body
     gestor.write_data_to_csv()
     status 201
