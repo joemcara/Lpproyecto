@@ -1,5 +1,6 @@
-usuario,ruta
-Andres,RutaCeibos
-Joseph,RutaGuayarte
-Joseph,RutaCeibos
-Andres,RutaGuayarte
+nombre,correo,nombre_usuario,contrasena
+Andres,RutaCeibos,,
+Joseph,RutaGuayarte,,
+Joseph,RutaCeibos,,
+Andres,RutaGuayarte,,
+caro,caro@,gadacaro,a2

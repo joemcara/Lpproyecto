@@ -11,7 +11,7 @@ class GestorUsuario
     
     def write_data_to_csv
         CSV.open(ARCHIVO_USUARIOS, 'w') do |csv|
-          csv << ['nombre', 'correo', 'nombre_usuario', 'contrasena', 'rutasMeGusta', 'rutasFavoritas']
+          csv << ['nombre', 'correo', 'nombre_usuario', 'contrasena']
           usuarios.each { |row| csv << row.values }
         end
     end
@@ -47,13 +47,18 @@ post '/api/users' do
     request_body.to_json
 end
 
-put '/api/users/:id' do
-    id = params['id'].to_i
+put '/api/users/:nombre' do
+    nombreUser = params['nombre']
     request_body = JSON.parse(request.body.read)
-    data = read_data_from_csv
-    data[id] = request_body
-    write_data_to_csv(data)
+    gestor.read_data_from_csv
+    gestor.usuarios.each_with_index do |userName, index|
+        if userName['nombre'] == nombreUser
+          gestor.usuarios[index] = request_body
+        end
+    end
+    gestor.write_data_to_csv()
     status 204
+    {"UPDATED" => nombreUser}.to_json
 end
 
 delete '/api/users/:ruta' do

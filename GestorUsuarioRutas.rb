@@ -1,7 +1,7 @@
 require 'csv'
 require 'sinatra'
 require 'json'
-ARCHIVO_USUARIOS = 'rutas-usuarios.csv'
+ARCHIVO_USUARIOS_RUTA = 'rutas-usuarios.csv'
 class GestorUsuarioRutas
   attr_accessor :usuarioRutas
 
@@ -9,14 +9,14 @@ class GestorUsuarioRutas
         @usuarioRutas = data
     end
     def write_data_to_csv
-        CSV.open(ARCHIVO_USUARIOS, 'w') do |csv|
+        CSV.open(ARCHIVO_USUARIOS_RUTA, 'w') do |csv|
           csv << ['usuario', 'ruta']
           usuarioRutas.each { |row| csv << row.values }
         end
     end
     def read_data_from_csv
         data = []
-        CSV.foreach(ARCHIVO_USUARIOS, headers: true) do |row|
+        CSV.foreach(ARCHIVO_USUARIOS_RUTA, headers: true) do |row|
           data << row.to_h
         end
         @usuarioRutas = data
@@ -25,13 +25,13 @@ end
 
 gestor = GestorUsuarioRutas.new([])
 
-get '/api/users-routes' do
+get '/api/users_routes' do
     content_type :json
     gestor.read_data_from_csv
     gestor.usuarioRutas.to_json
 end
   
-post '/api/users-routes' do
+post '/api/users_routes' do
     request_body = JSON.parse(request.body.read)
     gestor.read_data_from_csv
     gestor.usuarioRutas.each_with_index do |userRoutePair, index|
@@ -45,6 +45,7 @@ post '/api/users-routes' do
     request_body.to_json
 end
 
+=begin
 put '/api/users/:id' do
     id = params['id'].to_i
     request_body = JSON.parse(request.body.read)
@@ -61,3 +62,4 @@ delete '/api/users/:ruta' do
     write_data_to_csv(data)
     status 204
 end
+=end
