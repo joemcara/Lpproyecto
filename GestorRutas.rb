@@ -2,6 +2,7 @@ require 'csv'
 require 'sinatra'
 require 'json'
 ARCHIVO = 'rutas.csv'
+
 class GestorRutas
   attr_accessor :rutas
 
@@ -24,6 +25,7 @@ class GestorRutas
       @rutas = data
       end
 end
+# Habilitar CORS para todas las rutas
 
 gestor = GestorRutas.new([])
   
