@@ -12,7 +12,7 @@ class GestorRutas
   
     def write_data_to_csv()      
       CSV.open(ARCHIVO, 'w') do |csv|
-          csv << ["nombre","tiempo","dinero","valoracion"]
+          csv << ["nombre","tiempo","dinero","valoracion", "likes", "no_recomendado"]
           rutas.each {|row| csv << row.values}
         end
     end
