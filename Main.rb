@@ -17,3 +17,6 @@ require_relative 'GestorUsuario'
 #Requerimiento de gestor de endpoints para CRUD de rutas
 require_relative 'GestorRutas'
 
+#Requerimiento de gestor de endpoints para CRUD de usuario-rutas
+require_relative 'GestorUsuarioRutas'
+
