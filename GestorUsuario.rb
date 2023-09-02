@@ -37,9 +37,7 @@ post '/api/users' do
     request_body = JSON.parse(request.body.read)
     gestor.read_data_from_csv
     gestor.usuarios.each_with_index do |usuario, index|
-        puts usuario['nombre'] == request_body['nombre']
-        if usuario['nombre'] == request_body['nombre']
-
+        if usuario['nombre_usuario'] == request_body['nombre_usuario']
           return status 400
         end
       end
