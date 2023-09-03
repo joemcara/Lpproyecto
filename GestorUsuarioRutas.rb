@@ -45,21 +45,14 @@ post '/api/users_routes' do
     request_body.to_json
 end
 
-=begin
-put '/api/users/:id' do
-    id = params['id'].to_i
-    request_body = JSON.parse(request.body.read)
-    data = read_data_from_csv
-    data[id] = request_body
-    write_data_to_csv(data)
+delete '/api/users_routes/:usuario/:ruta' do
+    nombreRuta = params['ruta']
+    nombreUsuario = params['usuario']
+    gestor.read_data_from_csv()
+    index = gestor.usuarioRutas.find_index { |ruta| ruta['ruta'] == nombreRuta && ruta['usuario'] == nombreUsuario}
+    gestor.usuarioRutas.delete_at(index.to_i)
+    gestor.write_data_to_csv()
     status 204
 end
 
-delete '/api/users/:ruta' do
-    id = params['user'].to_i
-    data = read_data_from_csv
-    data.delete_at(id)
-    write_data_to_csv(data)
-    status 204
-end
-=end
+
