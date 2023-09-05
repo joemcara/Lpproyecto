@@ -1,4 +1,3 @@
-nombre,tiempo,dinero,valoracion,likes,no_recomendado
-RutaCeibos,25min,400,4.0,23,2
-RutaGuayarte,25min,400,4.0,40,5
-RutaSur,30min,700,4.0,40,5
+nombre,lugares,likes,no_recomendado
+RutaGuayarte,malecon 1 malecon 2,0,0
+RutaSur,malecon 2 malecon 4,0,0
